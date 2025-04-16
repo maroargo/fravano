@@ -1,5 +1,5 @@
 {
-  "name": "transportation",
+  "name": "fravano",
   "version": "0.1.0",
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
