@@ -2,6 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import useSWR from "swr";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,43 +22,45 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
-import { Organization, Role } from "@prisma/client";
-import useSWR from "swr";
-
 import { userUpdateSchema, type UserUpdateSchema } from "@/lib/zod";
+import { Organization, Role } from "@prisma/client";
 import { IStatus } from "@/interfaces/status";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
-interface UserUpdateFormProps {
+interface UserFormProps {
   defaultValues: UserUpdateSchema;
   onSubmit: (data: UserUpdateSchema) => Promise<void>;
   submitButtonText: string;
   isSubmitting: boolean;
 }
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 export default function UserUpdateForm({
   defaultValues,
   onSubmit,
   submitButtonText,
   isSubmitting,
-}: UserUpdateFormProps) {
+}: UserFormProps) {
   const form = useForm<UserUpdateSchema>({
     resolver: zodResolver(userUpdateSchema),
     defaultValues,
   });
 
-  const { data: organizations } = useSWR<Organization[]>("/api/organizations/active",fetcher);
+  const {
+    data: organizations
+  } = useSWR<Organization[]>("/api/organizations/active", fetcher);
 
-  const { data: roles } = useSWR<Role[]>("/api/roles/active", fetcher);
-
-  const statusList: IStatus[] = [
-      { id: "0", name: "Active" },
-      { id: "1", name: "Inactive" },
-    ];
-    
+  const { 
+    data: roles
+  } = useSWR<Role[]>("/api/roles/active", fetcher);
+ 
   const organizationList = organizations || [];
   const roleList = roles || [];
+  
+  const statusList: IStatus[] = [
+    { id: "0", name: "Active" },
+    { id: "1", name: "Inactive" },
+  ];
 
   return (
     <Form {...form}>
@@ -69,7 +72,7 @@ export default function UserUpdateForm({
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input placeholder="Name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -82,7 +85,7 @@ export default function UserUpdateForm({
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" {...field} />
+                <Input placeholder="Email" type="email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -95,12 +98,12 @@ export default function UserUpdateForm({
             <FormItem>
               <FormLabel>Phone</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input placeholder="Phone" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
-        />
+        />        
 
         <FormField
           control={form.control}
@@ -150,7 +153,7 @@ export default function UserUpdateForm({
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> 
 
         <FormField
           control={form.control}
@@ -175,7 +178,7 @@ export default function UserUpdateForm({
               <FormMessage />
             </FormItem>
           )}
-        />
+        />              
 
         <Button
           disabled={isSubmitting}

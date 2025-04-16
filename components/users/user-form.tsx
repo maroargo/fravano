@@ -2,6 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import useSWR from "swr";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,12 +22,8 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
-import { Organization, Role } from "@prisma/client";
-import useSWR from "swr";
-
 import { userSchema, type UserSchema } from "@/lib/zod";
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import { Organization, Role } from "@prisma/client";
 
 interface UserFormProps {
   defaultValues: UserSchema;
@@ -34,6 +31,8 @@ interface UserFormProps {
   submitButtonText: string;
   isSubmitting: boolean;
 }
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function UserForm({
   defaultValues,
@@ -46,6 +45,9 @@ export default function UserForm({
     defaultValues,
   });
 
+  const { data: role } = useSWR<Role>("/api/roles/user", fetcher);
+  const isStandarAdmin = role ? role.name == "Standar Admin" : false;
+
   const {
     data: organizations
   } = useSWR<Organization[]>("/api/organizations/active", fetcher);
@@ -53,7 +55,7 @@ export default function UserForm({
   const { 
     data: roles
   } = useSWR<Role[]>("/api/roles/active", fetcher);
-
+ 
   const organizationList = organizations || [];
   const roleList = roles || [];
   
@@ -67,7 +69,7 @@ export default function UserForm({
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input placeholder="Name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -80,7 +82,7 @@ export default function UserForm({
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" {...field} />
+                <Input placeholder="Email" type="email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -93,7 +95,7 @@ export default function UserForm({
             <FormItem>
               <FormLabel>Phone</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input placeholder="Phone" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -112,32 +114,37 @@ export default function UserForm({
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> 
 
-        <FormField
-          control={form.control}
-          name="idOrganization"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Organization</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a organization" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {organizationList.map((organization) => (
-                    <SelectItem key={organization.id} value={organization.id}>
-                      {organization.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {!isStandarAdmin && (
+          <FormField
+            control={form.control}
+            name="idOrganization"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Organization</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a organization" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {organizationList.map((organization) => (
+                      <SelectItem key={organization.id} value={organization.id}>
+                        {organization.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}        
 
         <FormField
           control={form.control}
@@ -162,7 +169,7 @@ export default function UserForm({
               <FormMessage />
             </FormItem>
           )}
-        />
+        />               
 
         <Button
           disabled={isSubmitting}

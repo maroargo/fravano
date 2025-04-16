@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import useSWR from "swr";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -24,10 +25,8 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { organizationSchema, type OrganizationSchema } from "@/lib/zod";
-
-import { Language, Locale, Timezone } from "@prisma/client";
-import useSWR from "swr";
 import { IStatus } from "@/interfaces/status";
+import { Timeformat, Timezone } from "@prisma/client";
 
 interface OrganizationFormProps {
   defaultValues: OrganizationSchema;
@@ -51,228 +50,209 @@ export default function OrganizationForm({
     defaultValues,
   });
 
-  const { data: locales } = useSWR<Locale[]>("/api/locales", fetcher);
-
   const { data: timezones } = useSWR<Timezone[]>("/api/timezones", fetcher);
+  const { data: timeformats } = useSWR<Timeformat[]>(
+    "/api/timeformats",
+    fetcher
+  );
 
-  const { data: languages } = useSWR<Language[]>("/api/languages", fetcher);
-
+  const timezoneList = timezones || [];
+  const timeformatList = timeformats || [];
   const statusList: IStatus[] = [
     { id: "0", name: "Active" },
     { id: "1", name: "Inactive" },
   ];
 
-  const localeList = locales || [];
-  const timezoneList = timezones || [];
-  const languageList = languages || [];
-
   const onDrop = useCallback((acceptedFiles: Array<File>) => {
     const file = new FileReader();
 
-    file.onload = function () {
+    file.onload = async function () {
       setPreview(file.result);
+
+      const formData = new FormData();
+
+      formData.append("file", acceptedFiles[0]);
+      formData.append("upload_preset", "MyHealthRide");
+      formData.append("api_key", "545863275441586");
+
+      const results = await fetch(
+        "https://api.cloudinary.com/v1_1/drviydqd6/image/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      ).then((r) => r.json());
+
+      form.setValue("logo", results.url);
     };
 
     file.readAsDataURL(acceptedFiles[0]);
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-  });
+  const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
+    useDropzone({
+      onDrop,
+    });
 
   const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid gap-4 grid-cols-2">
-          <div>
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="address"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Address</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="grid auto-rows-min gap-4 md:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="idTimezone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Time Zone</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
-                    <Input {...field} />
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a time zone" />
+                    </SelectTrigger>
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input type="email" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Address</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="idLocale"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Locale</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a locale" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {localeList.map((locale) => (
-                        <SelectItem key={locale.id} value={locale.id}>
-                          {locale.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="idTimezone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Timezone</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a timezone" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {timezoneList.map((timezone) => (
-                        <SelectItem key={timezone.id} value={timezone.id}>
-                          {timezone.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div>
-            <FormField
-              control={form.control}
-              name="logo"
-              render={() => (
-                <FormItem>
-                  <FormLabel>Logo</FormLabel>
-                  <div {...getRootProps()}>
-                    <input {...getInputProps()} />
-                    {isDragActive ? (
-                      <p>Drop the file here ...</p>
-                    ) : (
-                      <p>
-                        Drag and drop some file here, or click to select file
-                      </p>
-                    )}
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {preview && (
-              <p className="mb-5">
-                <img src={preview as string} alt="Upload preview" />
-              </p>
+                  <SelectContent>
+                    {timezoneList.map((timezone) => (
+                      <SelectItem key={timezone.id} value={timezone.id}>
+                        {timezone.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
             )}
+          />
 
-            <FormField
-              control={form.control}
-              name="idLanguage"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Language</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a language" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {languageList.map((language) => (
-                        <SelectItem key={language.id} value={language.id}>
-                          {language.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {isUpdating && (
-              <FormField
-                control={form.control}
-                name="idStatus"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Status</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a status" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {statusList.map((s) => (
-                          <SelectItem key={s.id} value={s.id}>
-                            {s.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          <FormField
+            control={form.control}
+            name="idTimeformat"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Time Format</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a time format" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {timeformatList.map((timeformat) => (
+                      <SelectItem key={timeformat.id} value={timeformat.id}>
+                        {timeformat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
             )}
-          </div>
+          />
         </div>
+
+        {isUpdating && (
+          <FormField
+            control={form.control}
+            name="idStatus"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Status</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a status" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {statusList.map((s) => (
+                      <SelectItem key={s.id} value={s.id}>
+                        {s.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
+        <FormField
+          control={form.control}
+          name="logo"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Logo</FormLabel>
+              <div {...getRootProps()}>
+                <input {...getInputProps()} />
+                {isDragActive ? (
+                  <p>Drop the file here ...</p>
+                ) : (
+                  <p>Drag 'n' drop file here, or click to select file</p>
+                )}
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {preview && (
+          <p className="mb-5">
+            <img src={preview as string} alt="Upload preview" />
+          </p>
+        )}
 
         <Button
           disabled={isSubmitting}

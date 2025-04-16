@@ -4,37 +4,19 @@ import { NextResponse } from "next/server";
  
 const { auth: middleware } = NextAuth(authConfig);
 
-const USER = process.env.BASIC_AUTH_USER;
-const PASS = process.env.BASIC_AUTH_PASS;
-
 const publicRoutes = [
   "/",
-  "/login",
-  "/register",  
-  "/api/auth/verify-email",
-  "/home",
+  "/login", 
+  "/join",     
+
+  "/register",
+  "/api/organizations/register",
+  "/api/locations/id"
 ];
 
 export default middleware((request) => {
   const {nextUrl, auth} = request;
-  const isLoggedIn = !!auth?.user;
-  
-  const authHeader = request.headers.get('authorization');
-
-  if (!authHeader) {
-      return new NextResponse('No autorizado', {
-          status: 401,
-          headers: { 'WWW-Authenticate': 'Basic realm="Protegido"' },
-      });
-  }
-
-  const [user, pass] = atob(authHeader.split(' ')[1]).split(':');
-  if (user !== USER || pass !== PASS) {
-      return new NextResponse('No autorizado', {
-          status: 401,
-          headers: { 'WWW-Authenticate': 'Basic realm="Protegido"' },
-      });
-  }
+  const isLoggedIn = !!auth?.user;      
 
   if (!publicRoutes.includes(nextUrl.pathname) && !isLoggedIn) {
     return NextResponse.redirect(new URL("/", nextUrl));

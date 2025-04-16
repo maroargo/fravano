@@ -32,13 +32,13 @@ export default function CreateOrganization() {
       name: "",
       email: "",
       address: "",
+      idStatus: "0"
     },
   });
 
   const onSubmit = async (data: OrganizationSchema) => {
     setIsSubmitting(true);
-    try {
-      
+    try {      
       const response = await fetch("/api/organizations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -49,7 +49,7 @@ export default function CreateOrganization() {
 
       if (!response.ok) {
         throw new Error(
-          responseData.message || "Failed to create organization"
+          responseData.message || "Failed to create organización"
         );
       }
       form.reset();
@@ -61,8 +61,7 @@ export default function CreateOrganization() {
         title: "Success",
         description: "Organization created.",
       })
-    } catch (error) {
-      console.error("Error creating organization:", error);
+    } catch (error) {      
       const errorMessage =
         error instanceof Error ? error.message : "An unexpected error occurred";
       setErrorMessage(errorMessage);
@@ -77,9 +76,9 @@ export default function CreateOrganization() {
         <Button>Add Organization</Button>
       </DialogTrigger>      
       
-      <DialogContent className="sm:max-w-[60%] overflow-auto bg-white">
+      <DialogContent className="sm:max-w-[425px] overflow-auto bg-white">
         <DialogHeader>
-          <DialogTitle>Create New Organization</DialogTitle>
+          <DialogTitle>Create new organization</DialogTitle>
         </DialogHeader>
         {errorMessage && (
           <div className="text-red-500 text-sm mb-4">{errorMessage}</div>
@@ -89,11 +88,10 @@ export default function CreateOrganization() {
             name: "",
             email: "",
             address: "", 
-            logo: "",           
-            idLocale: "",
+            idStatus: "0",
+            logo: "", 
             idTimezone: "",
-            idLanguage: "",
-            idStatus: "0"
+            idTimeformat: ""                       
           }}
           onSubmit={onSubmit}
           submitButtonText="Create"

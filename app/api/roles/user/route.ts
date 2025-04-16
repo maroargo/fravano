@@ -4,14 +4,13 @@ import { auth } from "@/auth";
 
 export async function GET() {
     try {
-        const session = await auth();        
+        const session = await auth();
 
         const data = await db.role.findUnique({             
             where: {
                 id: session?.user?.role?.id
             }
         });
-
         return NextResponse.json(data);
     } catch (error) {
         console.error('Error fetching roles:', error);

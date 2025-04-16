@@ -3,11 +3,11 @@ import Credentials from "next-auth/providers/credentials";
 import { signInSchema } from "@/lib/zod";
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
-import { IUserSession } from "@/interfaces/user";
 import { Status } from "@prisma/client";
+import { IUserSession } from "@/interfaces/user";
 
 export default {
-  trustHost: true, // Explicitly trust the host
+  trustHost: true,
   providers: [    
     Credentials({          
       authorize: async (credentials) => {                         
@@ -40,8 +40,8 @@ export default {
 
         if (!isValid) {
           throw new Error("Invalid Credentials");
-        }                  
-
+        }    
+        
         const userSession: IUserSession = {          
           name: user.name || "",          
           email: user.email,
@@ -50,11 +50,11 @@ export default {
             name: user.organization?.name || "",
             logo: user.organization?.logo || ""
           },
-          role: {
-            id: user.role?.id || "",              
+          role: {  
+            id: user.role?.id || "",          
             name: user.role?.name || "",
           }
-        } 
+        }
 
         return userSession;
         

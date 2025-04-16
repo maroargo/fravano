@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { TrashIcon } from "@radix-ui/react-icons";
 import { mutate } from "swr";
-
+import { useToast } from "@/hooks/use-toast";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,15 +17,23 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function DeleteUser({ id }: { id: string }) {
+  const { toast } = useToast();
+
   const handleDelete = async () => {
     const response = await fetch(`/api/users?id=${id}`, {
       method: "DELETE",
     });
     if (response.ok) {
-      console.log("User deleted successfully");
+      toast({
+        title: "Success",
+        description: "User deleted.",
+      });
       mutate("/api/users");
     } else {
-      console.error("Failed to delete user");
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred.",
+      });      
     }
   };
 
@@ -44,7 +52,7 @@ export default function DeleteUser({ id }: { id: string }) {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete this
+            This action cannot be undone. This will permanently delete the
             user.
           </AlertDialogDescription>
         </AlertDialogHeader>

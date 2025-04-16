@@ -9,7 +9,10 @@ export async function GET() {
         const data = await db.role.findMany({
             include: {
                 accessRoles: true
-            },                      
+            }, 
+            where: {
+                name: { not: "Administrator" }
+            },                     
             orderBy: {
                 createdAt: 'asc',
             },

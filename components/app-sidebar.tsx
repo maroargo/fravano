@@ -4,21 +4,13 @@ import * as React from "react"
 import { NavMain } from "./nav-main"
 
 import {
-  BadgeCheck,
-  Bolt,  
-  Building2,  
-  Car,  
-  ChartArea,   
-  HandCoins,   
-  House,  
-  Logs,  
-  MapPinHouse,   
-  PictureInPicture,   
-  Pill,   
-  Route,   
-  SquareDashedKanban,  
-  SquareUser,  
-  SquareUserRound,  
+  CalendarClock,
+  Clock10,   
+  House,       
+  MapPinHouse,       
+  NotebookPen,       
+  School,       
+  UserRound,       
   Users,
 } from "lucide-react"
 
@@ -31,113 +23,53 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { IRolNav, IUserNav } from "@/interfaces/session";
+import { IRolNav, IUserNav } from "@/interfaces/session"
 
-const data = {  
-  navMain: [ 
+const data = {
+  navMain: [
     {
-      title: "Overview",      
-      icon: SquareDashedKanban,
+      title: "Dashboard",      
+      icon: House,
       isActive: true,
-      url: "/home",      
-    },      
+      url: "/home",       
+    },   
     {
-      title: "Organizations",      
-      icon: Building2,   
-      isActive: true,   
+      title: "Organization",      
+      icon: School,
+      isActive: true,
       url: "/organizations",      
-    },      
+    }, 
     {
       title: "Users",      
-      icon: Users,  
-      isActive: true,    
+      icon: UserRound,
+      isActive: true,
       url: "/users",      
     },    
     {
-      title: "Address",      
+      title: "Locations",      
       icon: MapPinHouse,
       isActive: true,
-      url: "/address",      
-    },    
+      url: "/locations",      
+    },                
     {
-      title: "Drivers",      
-      icon: SquareUser,
+      title: "Employees",      
+      icon: Users,
       isActive: true,
-      url: "/drivers",      
-    },    
+      url: "/employee",      
+    },        
     {
-      title: "Vehicles",      
-      icon: Car,
+      title: "Attendances",      
+      icon: CalendarClock,
       isActive: true,
-      url: "/vehicles",      
-    },    
+      url: "/attendance",      
+    },        
     {
-      title: "Vehicles Check",      
-      icon: BadgeCheck,
+      title: "Compliance",      
+      icon: NotebookPen,
       isActive: true,
-      url: "/vehicles-check",      
-    },            
-    {
-      title: "Routes",      
-      icon: Route,
-      isActive: true,
-      url: "/route",      
-    },
-    {
-      title: "Dispatch",
-      icon: PictureInPicture,
-      isActive: true,
-      url: "/dispatch",      
-    },
-    {
-      title: "Analytic",      
-      icon: ChartArea,
-      isActive: true,
-      url: "/analytic",       
-    },
-    {
-      title: "Patients",      
-      icon: SquareUserRound,
-      isActive: true,
-      url: "/patient",       
-    },
-    {
-      title: "Pharmacy Orders",      
-      icon: Pill,
-      isActive: true,
-      url: "/pharmacy",       
-    }
-    /*{
-      title: "Map Location",
-      icon: PictureInPicture,
-      url: "/maplocation",      
-    },
-    {
-      title: "Map Autocomplete",
-      icon: PictureInPicture,
-      url: "/mapautocomplete",      
-    },
-    {
-      title: "Map Distance",
-      icon: PictureInPicture,
-      url: "/mapdistance",      
-    }*/
-  ],
-
-  navMainMan: [ 
-    {
-      title: "Roles",      
-      icon: HandCoins,
-      isActive: true,
-      url: "/roles",       
-    },
-    {
-      title: "Menus",      
-      icon: Logs,
-      isActive: true,
-      url: "/menus",       
-    },    
-  ]
+      url: "/compliance",      
+    }   
+  ]  
 }
 
 export function AppSidebar({
@@ -145,15 +77,15 @@ export function AppSidebar({
 }: {
   user : IUserNav;
   role : IRolNav;
-}) {      
-  
+}) {
+    
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
         <RolSwitcher role={role} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} itemsMan={data.navMainMan} />              
+        <NavMain items={data.navMain} />              
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />

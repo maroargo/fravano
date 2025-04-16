@@ -11,20 +11,9 @@ import {
 } from "@/components/ui/sidebar";
 
 export function NavMain({
-  items, itemsMan
+  items
 }: {
   items : {
-    title: string;
-    icon?: LucideIcon;
-    isActive?: boolean;
-    url?: string;
-    items?: {
-      title: string;
-      url: string;
-    }[];
-  }[];  
-
-  itemsMan : {
     title: string;
     icon?: LucideIcon;
     isActive?: boolean;
@@ -58,29 +47,7 @@ export function NavMain({
             </SidebarMenuItem>
           );
         })}
-      </SidebarMenu> 
-
-      <SidebarGroupLabel className="text-white">Maintenance</SidebarGroupLabel>
-      <SidebarMenu>
-        {itemsMan.map((item) => {
-          const isActive = item.url === pathname;
-
-          return (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton
-                asChild
-                tooltip={item.title}
-                isActive={isActive}                
-              >
-                <a href={item.url}>
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          );
-        })}
-      </SidebarMenu>  
+      </SidebarMenu>   
     </SidebarGroup>
   );
 }

@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { TrashIcon } from "@radix-ui/react-icons";
 import { mutate } from "swr";
 import { useToast } from "@/hooks/use-toast";
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,7 +31,10 @@ export default function DeleteOrganization({ id }: { id: string }) {
         description: "Organization deleted.",
       });
     } else {
-      console.error("Failed to delete organization");
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred.",
+      });
     }
   };
 

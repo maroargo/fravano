@@ -3,32 +3,7 @@
 @tailwind utilities;
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.dialog-content {
-  z-index: 100000;
-  /* pointer-events: auto; */
-}
-
-.dialog-overlay {
-  z-index: 99999;
-}
-
-.date-flex{
-  div{
-    display: flex!important;
-    flex: 1;
-  }
-}
-.pac-container {
-  z-index: 100001; /* Increase this value to be higher than dialog-content */
-  position: absolute;
-  display: block;
-  pointer-events: auto;
-}
-.modal-backdrop {
-  z-index: 30; /* Sets the backdrop behind the modal */
+  font-family: Arial, Helvetica, sans-serif;  
 }
 
 @layer base {
@@ -269,6 +244,8 @@ p {
 }
 .mi-grilla {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); 
-  gap: 16px; 
+  grid-template-columns: repeat(2, 1fr);  
+  gap: 16px;
 }
+
+

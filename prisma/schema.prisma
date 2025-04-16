@@ -5,7 +5,6 @@ datasource db {
  
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/@prisma/client"
 }
 
 enum Status {
@@ -13,109 +12,11 @@ enum Status {
   inactive
 } 
 
-enum StatusPharmacy {
-  pending
-  delivered
-}
-
-enum StatusRoute {
-  route
-  complete
-}
-
-enum StatusTrip {
-  pending
-  complete
-}
-
-model User {
-  id            String          @id @default(cuid())
-  name          String?
-  email         String          @unique
-  password      String?
-  emailVerified DateTime?
-  phone         String?  
-  image         String?
-  status        Status          @default(active)
-  
-  organization    Organization?    @relation(fields: [idOrganization], references: [id])
-  idOrganization  String?
-
-  role            Role?            @relation(fields: [idRole], references: [id])
-  idRole          String?
-
-  drivers         Driver[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Locale {
-  id            String          @id @default(cuid())
-  name          String  
-  status        Status          @default(active)
-
-  organizations Organization[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Timezone {
-  id            String          @id @default(cuid())
-  name          String    
-  status        Status          @default(active)
-
-  organizations Organization[]
-  routes Route[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Language {
-  id            String          @id @default(cuid())
-  name          String  
-  status        Status          @default(active)
-
-  organizations Organization[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Organization {
-  id            String          @id @default(cuid())
-  name          String
-  email         String          @unique
-  address       String?  
-  logo          String?
-  lat           String?
-  lng           String?
-  status        Status          @default(active)
-      
-  locale        Locale?          @relation(fields: [idLocale], references: [id])
-  idLocale      String?
-
-  timezone      Timezone?        @relation(fields: [idTimezone], references: [id])
-  idTimezone    String? 
-
-  language      Language?        @relation(fields: [idLanguage], references: [id])
-  idLanguage    String?  
-
-  patients      Patient[]
-  users         User[]
-  addresses     Address[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt  
-}
-
 model Role {
   id            String          @id @default(cuid())
   name          String             
-  status        Status          @default(active)    
-  
+  status        Status          @default(active)        
+
   users         User[]
   accessRoles   AccessRole[]
 
@@ -155,7 +56,27 @@ model AccessRole {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-  
+
+model User {
+  id            String          @id @default(cuid())
+  name          String
+  email         String          @unique
+  password      String
+  emailVerified DateTime?
+  phone         String  
+  image         String?
+  status        Status          @default(active)    
+
+  organization    Organization?    @relation(fields: [idOrganization], references: [id])
+  idOrganization  String?
+
+  role            Role?            @relation(fields: [idRole], references: [id])
+  idRole          String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model VerificationToken {
   identifier String             @unique
   token      String
@@ -164,300 +85,190 @@ model VerificationToken {
   @@id([identifier])
 }
 
-model Address {
+model Mode {
   id            String          @id @default(cuid())
-  name          String          
-  address       String? 
-  lat           Decimal?
-  lng           Decimal?          
+  value         String
+  name          String
   status        Status          @default(active)
+
+  employees     Employee[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+} 
+
+model Employee {
+  id              String          @id @default(cuid())
+  firstName       String
+  lastName        String
+  identifier      String                  
+  email           String?           
+  phone           String?  
+  image           String?
+
+  clockIn       String?  
+  clockOut      String?
+  
+  status          Status          @default(active)    
+
+  location        Location?       @relation(fields: [idLocation], references: [id])
+  idLocation      String?
+
+  mode            Mode?           @relation(fields: [idMode], references: [id])
+  idMode          String?   
+
+  attendances     Attendance[]
+  justifications  Justification[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Organization {
+  id            String          @id @default(cuid())
+  name          String
+  email         String          @unique
+  address       String?  
+  logo          String?
+  lat           String?
+  lng           String?
+  status        Status          @default(active)         
+
+  timezone      Timezone?        @relation(fields: [idTimezone], references: [id])
+  idTimezone    String?
+
+  timeformat      Timeformat?        @relation(fields: [idTimeformat], references: [id])
+  idTimeformat    String?
+
+  users                  User[]  
+  locations              Location[]  
+  organizationParams     OrganizationParams[] 
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt  
+}
+
+model OrganizationParams {
+  id            String          @id @default(cuid())
+
+  identifier    String?
+  clockIn       String?  
+  clockOut      String?
+  
+  analyticTitle      String?
+  analyticSrc        String?
+
+  organization      Organization    @relation(fields: [idOrganization], references: [id])
+  idOrganization    String
+
+  payPeriodType       PayPeriodType?       @relation(fields: [idPayPeriodType], references: [id])
+  idPayPeriodType     String?
+  payPeriodStart      DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt  
+}
+
+model PayPeriodType {
+  id            String          @id @default(cuid())
+  value         String
+  name          String
+  status        Status          @default(active)
+
+  organizationParams        OrganizationParams[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+} 
+
+model Location {
+  id                String          @id @default(cuid())
+  name              String          
+  address           String? 
+  status            Status          @default(active)
     
-  organization    Organization    @relation(fields: [idOrganization], references: [id])
-  idOrganization  String  
+  organization      Organization    @relation(fields: [idOrganization], references: [id])
+  idOrganization    String 
 
-  addressType    AddressType?    @relation(fields: [idAddressType], references: [id])
-  idAddressType  String?                
+  employees         Employee[] 
+  attendances       Attendance[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt  
 }
 
-model AddressType { 
+model Attendance {
   id            String          @id @default(cuid())
-  name          String          
   
-  status        Status          @default(active)
-  addresses     Address[]
+  date          DateTime 
+  ipAddress     String? 
+  macAddress    String? 
+  notes         String? 
+  lat           String?
+  lng           String? 
+
+  type          String? 
+  typeRegister  String?
+  location      Location?       @relation(fields: [idLocation], references: [id])
+  idLocation    String?
+
+  employee      Employee?       @relation(fields: [idEmployee], references: [id])
+  idEmployee    String?
+  image         String?
+
+  status        Status          @default(active)            
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt  
 }
 
-model Driver {
-  id                   String          @id @default(cuid())
-  licensePlate         String          @unique
-  vinNumber            String
-  licenseNumber        String
+model Justification {
+  id                      String          @id @default(cuid())
   
-  licenseState         LicenseState?   @relation(fields: [idLicenseState], references: [id])
-  idLicenseState       String?
+  employee                Employee?       @relation(fields: [idEmployee], references: [id])
+  idEmployee              String?
 
-  dateExpiredLicense   DateTime  
-  status               Status          @default(active)
-      
-  user                 User?    @relation(fields: [idUser], references: [id])
-  idUser               String?
-
-  vehicles      Vehicle[]
-  routes        Route[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt  
-}
-
-model LicenseState {
-  id            String          @id @default(cuid())
-  name          String
-  status        Status          @default(active)
-
-  drivers       Driver[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-} 
-
-model Vehicle {
-  id            String          @id @default(cuid())
-  name          String          @unique
-  label         String?
-  make          String?         
-  model         String?  
-  year          String?  
-  licensePlate  String          @unique
-  status        Status          @default(active)
-      
-  vehicleType     VehicleType?    @relation(fields: [idVehicleType], references: [id])
-  idVehicleType   String?
-
-  driver          Driver?    @relation(fields: [idDriver], references: [id])
-  idDriver        String?
-
-  maintenances    Maintenance[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt  
-}
-
-model Maintenance {
-  id            String          @id @default(cuid())
-  description   String          
-         
-  status        Status          @default(active)
-
-  vehicle       Vehicle?        @relation(fields: [idVehicle], references: [id])
-  idVehicle     String?
-
-  maintenanceDetails  MaintenanceDetail[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt  
-}
-
-model MaintenanceDetail {
-  id            String          @id @default(cuid())          
-  date          DateTime        
-  status        Status          @default(active)  
-
-  maintenance       Maintenance?        @relation(fields: [idMaintenance], references: [id])
-  idMaintenance     String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt  
-}
-
-model VehicleType {
-  id            String          @id @default(cuid())
-  name          String          
-  status        Status          @default(active)
-
-  vehicles     Vehicle[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt  
-}
-
-model Pharmacy {
-  id            String          @id @default(cuid())
-  address       String? 
-  order         String?
-  lat           Decimal?
-  lng           Decimal?
-  patient       Patient?        @relation(fields: [idPatient], references: [id])
-  idPatient     String?
-
-  status        StatusPharmacy  @default(pending)  
-  dateOrder     DateTime?
-  dateDelivery  DateTime?
-  copay         String?
-
-  pharmacyDetails      PharmacyDetail[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-} 
-
-model PharmacyDetail {
-  id            String          @id @default(cuid())
-  name          String  
-  quenty        String
-
-  status        Status          @default(active)
+  dateIni                 DateTime 
+  dateEnd                 DateTime     
+  notes                   String? 
   
-  pharmacy      Pharmacy?        @relation(fields: [idPharmacy], references: [id])
-  idPharmacy    String?
+  typeJustification       TypeJustification?       @relation(fields: [idTypeJustification], references: [id])
+  idTypeJustification     String?
+
+  status        Status          @default(active)            
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-} 
-
-model Patient {
-  id            String          @id @default(cuid())
-  patientId     String         
-  name          String
-  address       String? 
-  lat           Decimal?
-  lng           Decimal?
-
-  patientType      PatientType?    @relation(fields: [idPatientType], references: [id])
-  idPatientType    String?
-  notes            String? 
-
-
-  organization    Organization?    @relation(fields: [idOrganization], references: [id])
-  idOrganization  String?
-
-  pharmacys     Pharmacy[]
-  routes        Route[]
-
-  status        Status          @default(active)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-} 
-
-model PatientType {
-  id            String          @id @default(cuid())   
-  value         String          
-  name          String
-  status        Status          @default(active)
-
-  patients      Patient[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt  
 }
 
-model Route {
-  id               String               @id @default(cuid())
-  name             String
-  dateRoute        DateTime?
-  routeAsign       RouteAsign?       @relation(fields: [idRouteAsign], references: [id])
-  idRouteAsign     String?
-  routeType        RouteType?        @relation(fields: [idRouteType], references: [id])
-  idRouteType      String?
-  routePriority    RoutePriority?    @relation(fields: [idRoutePriority], references: [id])
-  idRoutePriority  String?
-  routePreference     RoutePreference?     @relation(fields: [idRoutePreference], references: [id])
-  idRoutePreference   String?
-
-  driver           Driver?           @relation(fields: [idDriver], references: [id])
-  idDriver         String? 
-
-  type             Type?        @relation(fields: [idType], references: [id])
-  idType           String?
-  patient          Patient?          @relation(fields: [idPatient], references: [id])
-  idPatient        String? 
-
-  timezone         Timezone?        @relation(fields: [idTimezone], references: [id])
-  idTimezone       String?  
-
-  routeDetails     RouteDetail[]
-  status           StatusRoute          @default(route)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model RouteDetail {
-  id                     String          @id @default(cuid()) 
-  
-  item                   String
-  address                String  
-  estimation             DateTime  
-  lat                    Decimal
-  lng                    Decimal
-  notes                  String  
-  statusTrip             StatusTrip     @default(pending)  
-
-  route                  Route?    @relation(fields: [idRoute], references: [id])
-  idRoute                String?
-
-  status                 Status          @default(active)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-} 
-
-model RouteAsign {
+model TypeJustification {
   id            String          @id @default(cuid())
   value         String
   name          String
   status        Status          @default(active)
 
-  routes        Route[]
+  justifications        Justification[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 } 
 
-model RoutePriority {
-  id            String          @id @default(cuid())  
-  value         String           
-  name          String
-  status        Status          @default(active)
-
-  routes        Route[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model RouteType {
-  id            String          @id @default(cuid())   
-  value         String          
-  name          String
-  status        Status          @default(active)
-
-  routes        Route[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Type {
-  id            String          @id @default(cuid()) 
-  value         String            
-  name          String
-  status        Status          @default(active)
-
-  routes        Route[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model RoutePreference {
+model Timezone {
   id            String          @id @default(cuid())
-  value         String
-  name          String
+  name          String    
   status        Status          @default(active)
 
-  routes        Route[]
+  organizations Organization[]  
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Timeformat {
+  id            String          @id @default(cuid())
+  name          String    
+  status        Status          @default(active)
+
+  organizations Organization[]  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

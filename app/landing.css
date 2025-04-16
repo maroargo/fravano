@@ -1,0 +1,97 @@
+.landing-container {
+    font-family: Arial, sans-serif;
+    color: #333;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #2c3e50;
+    color: white;
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .login-button {
+    padding: 10px 20px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .hero-section {
+    display: flex;
+    justify-content: space-between;
+    padding: 40px;
+    background-color: #ecf0f1;
+  }
+  
+  .hero-text {
+    max-width: 50%;
+  }
+  
+  .hero-text h2 {
+    font-size: 36px;
+    margin-bottom: 10px;
+  }
+  
+  .hero-text p {
+    font-size: 18px;
+  }
+  
+  .hero-image {
+    max-width: 45%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .services-section {
+    padding: 40px;
+    background-color: #f7f7f7;
+    text-align: center;
+  }
+  
+  .services-section h2 {
+    font-size: 30px;
+    margin-bottom: 20px;
+  }
+  
+  .services {
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .service {
+    width: 30%;
+    text-align: center;
+  }
+  
+  .service img {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .location-section {
+    padding: 40px;
+    text-align: center;
+  }
+  
+  .location-section .map-container {
+    margin-top: 20px;
+  }
+  
+  .footer {
+    padding: 20px;
+    text-align: center;
+    background-color: #2c3e50;
+    color: white;
+  }
+  

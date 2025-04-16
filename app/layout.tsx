@@ -1,12 +1,12 @@
 import React from "react";
 import type { Metadata } from "next";
+import { Toaster } from "@/components/ui/toaster";
 
 import "./globals.css";
-import { Providers } from "./providers"
 
 export const metadata: Metadata = {
-  title: "My Health Ride",
-  description: "My Health Ride dev app",
+  title: "Fravano",
+  description: "Fravano App",
 };
 
 export default function RootLayout({ children } : Readonly<{ children: React.ReactNode }>) {
@@ -15,7 +15,8 @@ export default function RootLayout({ children } : Readonly<{ children: React.Rea
             <body
                 className="font-work-sans"
             >
-                <Providers>{children}</Providers>
+                {children}
+                <Toaster />
             </body>
         </html>        
     )

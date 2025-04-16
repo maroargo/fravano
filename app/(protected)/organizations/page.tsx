@@ -1,28 +1,30 @@
 "use client";
 
+import React, {useState} from 'react';
+
 import CreateOrganization from "@/components/organizations/create-organization";
 import DeleteOrganization from "@/components/organizations/delete-organization";
 import UpdateOrganization from "@/components/organizations/update-organization";
-import { IOrganization } from "@/interfaces/organization";
-import { Role } from "@prisma/client";
-import React, { useState } from "react";
-
+import { Role } from '@prisma/client';
 import useSWR from "swr";
+import UpdateParamOrganization from '@/components/organizations/update-params';
+import { IOrganization } from '@/interfaces/organization';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Organizations() {
-  const [searchTerm, setSearchTerm] = useState("");
-
+  const [searchTerm, setSearchTerm] = useState('');
+  
   const {
     data: organizations,
     error,
     isLoading,
-  } = useSWR<IOrganization[]>("/api/organizations", fetcher);
+  } = useSWR<IOrganization[]>("/api/organizations", fetcher);  
 
   const { data: role } = useSWR<Role>("/api/roles/user", fetcher);
   const isAdmin = role ? role.name == "Administrator" : false;
-  
+  const isStandarAdmin = role ? role.name == "Standar Admin" : false;
+
   if (isLoading)
     return (
       <div className="flex justify-center items-center h-[600px] bg-white">
@@ -37,7 +39,7 @@ export default function Organizations() {
 
   const organizationList = organizations || [];
 
-  const filteredData = organizationList.filter((item) =>
+  const filteredData = organizationList.filter(item => 
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -45,11 +47,11 @@ export default function Organizations() {
     <>
       <div className="bg-white p-4 py-6 rounded-md">
         <div className="flex justify-between items-center mb-5">
-          <h1 className="text-xl font-medium">Organizations</h1>
-
+          <h1 className="text-xl font-medium">{isAdmin ? "Organizations" : "Organization"}</h1>
+          
           {isAdmin && (
             <CreateOrganization />
-          )}          
+          )}
         </div>
 
         <div className="flex justify-between items-center ">
@@ -64,30 +66,27 @@ export default function Organizations() {
                 <option>100</option>
               </select>
               <span className="pl-1">entries</span>
-            </label>
+            </label>  
           </div>
-
-          <div className="flex justify-between items-center mb-4">
-            <input
-              type="text"
-              placeholder="Search by name..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="border border-gray-300 rounded-md  px-3 py-1 focus-visible:ring-rojo1 focus-visible:outline-none focus-visible:ring-1"
-            />
-          </div>
+          
+          <input 
+            type="text" 
+            placeholder="Buscar..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border border-colorprimario1 rounded-md  px-3 py-1"
+          />
         </div>
 
         <div className="overflow-x-auto">
           <table className="min-w-full table-auto border-collapse text-sm">
-            <thead className="bg-rojo1 text-white">
+            <thead className="bg-colorprimario1 text-white">
               <tr>
                 <th className="px-4 py-2 text-left">Name</th>
                 <th className="px-4 py-2 text-left">Email</th>
-                <th className="px-4 py-2 text-left">Address</th>
-                <th className="px-4 py-2 text-left">Locale</th>
+                <th className="px-4 py-2 text-left">Address</th>                
                 <th className="px-4 py-2 text-left">Timezone</th>
-                <th className="px-4 py-2 text-left">Language</th>
+                <th className="px-4 py-2 text-left">Timeformat</th>
                 <th className="px-4 py-2 text-left">Status</th>
                 <th className="px-4 py-2 text-left">Actions</th>
               </tr>
@@ -101,16 +100,18 @@ export default function Organizations() {
                   >
                     <td className="px-4 py-2">{org.name}</td>
                     <td className="px-4 py-2">{org.email}</td>
-                    <td className="px-4 py-2">{org.address}</td>
-                    <td className="px-4 py-2">{org.locale?.name}</td>
-                    <td className="px-4 py-2">{org.timezone?.name}</td>
-                    <td className="px-4 py-2">{org.language?.name}</td>
+                    <td className="px-4 py-2">{org.address}</td>  
+                    <td className="px-4 py-2">{org.timezone?.name}</td> 
+                    <td className="px-4 py-2">{org.timeformat?.name}</td>                  
                     <td className="px-4 py-2">{org.status}</td>
                     <td className="px-4 py-2">
                       <UpdateOrganization organization={org} />
                       {isAdmin && (
-                        <DeleteOrganization id={org.id} />
-                      )}
+                        <DeleteOrganization id={org.id} />                        
+                      )}  
+                      {isStandarAdmin && (                        
+                        <UpdateParamOrganization organizationParam={org.organizationParams[0]} />
+                      )}                    
                     </td>
                   </tr>
                 ))
@@ -119,6 +120,7 @@ export default function Organizations() {
                   <td className="px-4 py-2">No results found</td>
                 </tr>
               )}
+              
             </tbody>
           </table>
         </div>

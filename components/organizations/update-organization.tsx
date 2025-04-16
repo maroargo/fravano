@@ -15,12 +15,12 @@ import {
 import OrganizationForm from "@/components/organizations/organization-form";
 import { type OrganizationSchema } from "@/lib/zod";
 import { Pencil1Icon } from "@radix-ui/react-icons";
-import { IOrganization } from "@/interfaces/organization";
 import { useToast } from "@/hooks/use-toast";
 import { Status } from "@prisma/client";
+import { IOrganization } from "@/interfaces/organization";
 
-export default function UpdateOrganization({ organization } : { organization: IOrganization }) {
-    const [isSubmitting, setIsSubmitting] = useState(false);    
+export default function UpdateOrganization({ organization }: { organization: IOrganization }) {
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [isUpdating, setIsUpdating] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
     const [isDialogOpen, setDialogOpen] = useState(false);
@@ -40,7 +40,7 @@ export default function UpdateOrganization({ organization } : { organization: IO
 
             if (!response.ok) {
                 throw new Error(
-                    responseData.message || "Failed to update organization"
+                    responseData.message || "An unexpected error occurred"
                 );
             }
 
@@ -52,8 +52,7 @@ export default function UpdateOrganization({ organization } : { organization: IO
               title: "Success",
               description: "Organization updated.",
             });
-        } catch (error) {
-            console.error("Error updating organization:", error);
+        } catch (error) {            
             const errorMessage =
                 error instanceof Error
                     ? error.message
@@ -75,7 +74,7 @@ export default function UpdateOrganization({ organization } : { organization: IO
                     <Pencil1Icon className="h-4 w-4" />
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[60%] overflow-auto bg-white">
+            <DialogContent className="sm:max-w-[425px] overflow-auto bg-white">
                 <DialogHeader>
                     <DialogTitle>Update Organization</DialogTitle>
                 </DialogHeader>
@@ -89,11 +88,10 @@ export default function UpdateOrganization({ organization } : { organization: IO
                         name: organization.name || "",
                         email: organization.email || "",
                         address: organization.address || "",
+                        idStatus: organization.status == Status.active ? "0" : "1",
                         logo: organization.logo || "",
-                        idLocale: organization.idLocale || "",
-                        idTimezone: organization.idTimezone || "",
-                        idLanguage: organization.idLanguage || "",
-                        idStatus: organization.status == Status.active ? "0" : "1"
+                        idTimezone: organization.idTimezone || "",                        
+                        idTimeformat: organization.idTimeformat || "",
                     }}
                     onSubmit={onSubmit}
                     submitButtonText="Update"

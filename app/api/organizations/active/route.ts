@@ -8,36 +8,23 @@ export async function GET() {
         const session = await auth();        
         const esAdmin = session?.user.role?.name == "Administrator";
 
-        const data = await db.organization.findMany({ 
+        const data = await db.organization.findMany({
             include: {
-                locale: {
-                    select: {
-                        name: true
-                    },
-                },
-                timezone: {
-                    select: {
-                        name: true
-                    },
-                },
-                language: {
-                    select: {
-                        name: true
-                    },
-                }
+                timezone: true,
+                timeformat: true,
+                organizationParams: true,
             }, 
             where: {
                 status: Status.active,
-                ...(!esAdmin ? { id: session?.user.idOrganization } : {}),
-            },        
+                ...(!esAdmin ? { id: session?.user.idOrganization } : {}),                
+            },                      
             orderBy: {
                 createdAt: 'asc',
             },
         });
         
         return NextResponse.json(data);
-    } catch (error) {
-        console.error('Error fetching organizations:', error);
+    } catch (error) {        
         return NextResponse.json({ message: 'An unexpected error occurred' }, { status: 500 });
     }
 }

@@ -10,14 +10,18 @@ export default {
   theme: {
   	extend: {
   		colors: {
-			background: 'hsl(var(--background))',
-			foreground: '#FF0000',  
-			primary: {  
-			DEFAULT: '#bf132c',  
-			foreground: '#ffffff'  
-			},
-			rojo1: '#c63549', 
-			yellow1: '#ffda00',
+			colorprimario1: '#003f87',
+			colorprimario2: '#FFCC00',
+
+			colorprimario3: '#00ff2a',
+			colorprimario4: '#FF0011',			
+	
+  			background: 'hsl(var(--background))',
+  			foreground: 'hsl(var(--foreground))',
+  			primary: {
+  				DEFAULT: 'hsl(var(--primary))',
+  				foreground: 'hsl(var(--primary-foreground))'
+  			},
   			secondary: {
   				DEFAULT: 'hsl(var(--secondary))',
   				foreground: 'hsl(var(--secondary-foreground))'

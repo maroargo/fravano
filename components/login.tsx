@@ -7,7 +7,6 @@ import {
   CardContent
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -25,7 +24,6 @@ import {
 import { loginAction } from "@/actions/auth-action";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 function FormLogin({
   className,
@@ -71,7 +69,7 @@ function FormLogin({
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="email" type="email" {...field} />
+                      <Input placeholder="Email" type="email" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -85,7 +83,7 @@ function FormLogin({
                     <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="password"
+                        placeholder="Password"
                         type="password"
                         {...field}
                       />
@@ -106,11 +104,7 @@ function FormLogin({
           </Form>
         </CardContent>
       </Card>
-
-      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
-        By clicking continue, you agree to our <Link href="/">Terms of Service</Link>{" "}
-        and <Link href="/">Privacy Policy</Link>.
-      </div>
+      
     </div>
   );  
 }

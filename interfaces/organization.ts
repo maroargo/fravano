@@ -1,4 +1,4 @@
-import { Language, Locale, Timezone } from "@prisma/client";
+import { OrganizationParams, Timeformat, Timezone } from "@prisma/client"
 
 export interface IOrganization {
     id: string
@@ -8,13 +8,13 @@ export interface IOrganization {
     logo: string
     lat: string
     lng: string
-    status: string
-    idLocale: string
-    locale: Locale
+    status: string 
+        
     idTimezone: string
     timezone: Timezone
-    idLanguage: string
-    language: Language
+    idTimeformat: string
+    timeformat: Timeformat
+    organizationParams: OrganizationParams[]
 }
 
 export interface IOrganizationSession {    

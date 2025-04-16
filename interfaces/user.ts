@@ -3,7 +3,7 @@ import { IOrganizationSession } from "./organization";
 import { IRoleSession } from "./role";
 
 export interface IUser {
-  id?: string
+  id: string
   name?: string
   email?: string
   phone?: string

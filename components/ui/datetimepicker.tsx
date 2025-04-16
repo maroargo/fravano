@@ -72,10 +72,12 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
         onChange={handleDateChange}
         showTimeSelect={pickerPosition === "time"} // Show time picker only if time icon was clicked
         showTimeSelectOnly={pickerPosition === "time"} // Only show the time part of the picker
-        dateFormat="MM/dd/yyyy h:mm aa" // Always show both date and time in input
+        dateFormat="dd/MM/yyyy h:mm aa" // Always show both date and time in input
         disabled={disabled}
+        timeFormat="HH:mm"
+        timeIntervals={1}
         className={cn(
-          "w-full h-10 rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm text-sm placeholder:text-gray-400 focus-visible:ring-rojo1 focus-visible:outline-none focus-visible:ring-1 disabled:opacity-50",
+          "w-full h-10 rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:opacity-50",
           className
         )}
         popperPlacement={pickerPosition === "date" ? "bottom-start" : "bottom-end"}

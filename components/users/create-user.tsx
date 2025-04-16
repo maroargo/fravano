@@ -16,8 +16,10 @@ import { useState } from "react";
 
 import { mutate } from "swr";
 import UserForm from "./user-form";
+import { useToast } from "@/hooks/use-toast";
 
 export default function CreateUser() {
+  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -28,9 +30,7 @@ export default function CreateUser() {
       name: "",
       email: "",
       password: "",
-      phone: "",
-      idOrganization: "",
-      idRole: ""
+      phone: ""         
     },
   });
 
@@ -47,15 +47,20 @@ export default function CreateUser() {
 
       if (!response.ok) {
         throw new Error(
-          responseData.message || "Failed to create user"
+          responseData.message || "Failed to create usuario"
         );
       }
       form.reset();
       setDialogOpen(false);
       mutate("/api/users");
       setErrorMessage("");
-    } catch (error) {
-      console.error("Error creating user:", error);
+
+      toast({
+        title: "Success",
+        description: "User created.",
+      });
+
+    } catch (error) {      
       const errorMessage =
         error instanceof Error ? error.message : "An unexpected error occurred";
       setErrorMessage(errorMessage);
@@ -72,7 +77,7 @@ export default function CreateUser() {
 
       <DialogContent className="sm:max-w-[425px] bg-white">
         <DialogHeader>
-          <DialogTitle>Create New User</DialogTitle>
+          <DialogTitle>Create User</DialogTitle>
         </DialogHeader>
         {errorMessage && (
           <div className="text-red-500 text-sm mb-4">{errorMessage}</div>
@@ -84,7 +89,7 @@ export default function CreateUser() {
             password: "",
             phone: "",
             idOrganization: "",
-            idRole: ""
+            idRole: ""                       
           }}
           onSubmit={onSubmit}
           submitButtonText="Create"
